@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Todo Lists</title>
+</head>
+<body>
+	<ul>
+		{{ range . }}
+			<li><a href="/todo/view/{{ .Id }}">{{ .Title }}</a></li>
+		{{ end }}
+	</ul>
+</body>
+</html>
