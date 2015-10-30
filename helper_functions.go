@@ -1,8 +1,9 @@
-package todo
+package main
 
 import (
 	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/ottermad/odotgo/todo"
 )
 
 func NewDB() *sql.DB {
@@ -11,7 +12,7 @@ func NewDB() *sql.DB {
 		panic(err)
 	}
 
-	CreateTables(db)
+	todo.CreateTables(db)
 
 	return db
 }
