@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/site.min.css">
+	<title>{{ .Title }}</title>
+</head>
+<body>
+	<div class="container">
+		<h6><a href="/todo">< Back</a></h6>
+		<h1>{{ .Title }}</h1>
+		<p>{{ .Description }}</p>
+		{{ $id := .Id }}
+		<p><a href="/todo/add-item/{{ .Id }}">Add Item</a></p>
+		<ul>
+			{{ range .Items }}
+				<li>{{ .Content }} <a href="/todo/delete-item/{{ $id }}/{{ .Id }}">Delete</a></li>
+			{{ end }}
+		</ul>
+	</div>
+</body>
+</html>

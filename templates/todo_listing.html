@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/site.min.css">
+	<title>Todo Lists</title>
+</head>
+<body>
+	<div class="container">
+		<h1>My Todo Lists</h1>
+		<p><a href="/todo/add">Add Todo List</a></p>
+		<ul>
+			{{ range . }}
+				<li>
+					{{ .Title }} <a href="/todo/view/{{ .Id }}">View</a> <a href="/todo/edit/{{ .Id }}">Edit</a> <a href="/todo/delete/{{ .Id }}">Delete</a>
+				</li>
+			{{ end }}
+		</ul>
+		</div>
+</body>
+</html>

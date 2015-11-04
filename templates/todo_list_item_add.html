@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/site.min.css">
+	<title>Add Todo List</title>
+</head>
+<body>
+	<div class="container">
+		<h6><a href="/todo/view/{{ .Id }}">< Back</a></h6>
+		<h1>Add Item to Todo List - {{ .Title }}</h1>
+		<form method="POST">
+			<div class="form-group">	
+				<label for="content">Content:</label>
+				<input id="content" name="content" class="form-control">
+			</div>
+			<button type="submit" class="btn btn-success">Add</button>
+		</form>
+	</div>
+</body>
+</html>

@@ -2,6 +2,7 @@ package todo
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 )
 
@@ -12,7 +13,7 @@ func CreateTables(db *sql.DB) {
 		panic(err)
 	}
 
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS TBL_TODO_ITEM (ID INTEGER PRIMARY KEY AUTOINCREMENT, TODO_LIST INTEGER NOT NULL, CONTENT VARCHAR(250) NOT NULL, FOREIGN KEY (TODO_LIST) REFERENCES TBL_TODO(ID), UNIQUE (TODO_LIST, CONTENT))")
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS TBL_TODO_ITEM (ID INTEGER PRIMARY KEY AUTOINCREMENT, TODO_LIST INTEGER NOT NULL, CONTENT VARCHAR(250) NOT NULL, FOREIGN KEY (TODO_LIST) REFERENCES TBL_TODO(ID) ON DELETE CASCADE, UNIQUE (TODO_LIST, CONTENT))")
 
 	if err != nil {
 		panic(err)
@@ -54,6 +55,22 @@ func (todoList *TodoList) New(title string, description string, db *sql.DB) erro
 	todoList.Description = description
 	todoList.db = db
 	todoList.Items = []TodoListItem{}
+
+	return nil
+}
+
+func (todoList *TodoList) Delete() error {
+	_, err := todoList.db.Exec("DELETE FROM TBL_TODO WHERE ID = ?", todoList.Id)
+	if err != nil {
+		fmt.Println("DELETING ERROR")
+		return err
+	}
+
+	todoList.Id = -1
+	todoList.Title = ""
+	todoList.Description = ""
+	todoList.Items = nil
+	todoList.db = nil
 
 	return nil
 }
@@ -138,6 +155,57 @@ func (todoList *TodoList) AddItem(content string) error {
 	// crate struct and set attributes
 	todoItem := TodoListItem{Id: id, Content: content}
 	todoList.Items = append(todoList.Items, todoItem)
+
+	return nil
+}
+
+func (todoList *TodoList) DeleteItem(id int) error {
+	// Check id is valid
+	is_valid := false
+	var item_index int
+	for index, item := range todoList.Items {
+		if item.Id == id {
+			is_valid = true
+			item_index = index
+		}
+	}
+
+	if !is_valid {
+		return errors.New("id not in items of TodoList")
+	}
+
+	_, err := todoList.db.Exec("DELETE FROM TBL_TODO_ITEM WHERE ID = ?", id)
+
+	if err != nil {
+		return err
+	}
+
+	// Remove from items
+	todoList.Items = append(todoList.Items[:item_index], todoList.Items[item_index+1:]...)
+
+	return nil
+}
+
+func (todoList *TodoList) UpdateTitle(title string) error {
+	_, err := todoList.db.Exec("UPDATE TBL_TODO SET TITLE = ? WHERE ID = ?", title, todoList.Id)
+
+	if err != nil {
+		return err
+	}
+
+	todoList.Title = title
+
+	return nil
+}
+
+func (todoList *TodoList) UpdateDescription(description string) error {
+	_, err := todoList.db.Exec("UPDATE TBL_TODO SET DESCRIPTION = ? WHERE ID = ?", description, todoList.Id)
+
+	if err != nil {
+		return err
+	}
+
+	todoList.Description = description
 
 	return nil
 }

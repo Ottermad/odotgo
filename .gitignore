@@ -1,2 +1,4 @@
 *.sqlite3
 odotgo.exe
+.DS_Store
+odotgo
