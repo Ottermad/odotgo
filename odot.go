@@ -6,7 +6,6 @@ import (
 	"github.com/ottermad/odotgo/todo"
 
 	"github.com/julienschmidt/httprouter"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {

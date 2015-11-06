@@ -8,12 +8,26 @@ import (
 
 // Helper Functions
 func CreateTables(db *sql.DB) {
-	_, err := db.Exec("CREATE TABLE IF NOT EXISTS TBL_TODO (ID INTEGER PRIMARY KEY AUTOINCREMENT, TITLE VARCHAR(100) NOT NULL UNIQUE, DESCRIPTION VARCHAR(250) NOT NULL)")
+	_, err := db.Exec(`
+		CREATE TABLE IF NOT EXISTS "TBL_TODO" (
+			ID SERIAL PRIMARY KEY, 
+			TITLE VARCHAR(100) NOT NULL UNIQUE, 
+			DESCRIPTION VARCHAR(250) NOT NULL
+		)
+	`)
 	if err != nil {
 		panic(err)
 	}
 
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS TBL_TODO_ITEM (ID INTEGER PRIMARY KEY AUTOINCREMENT, TODO_LIST INTEGER NOT NULL, CONTENT VARCHAR(250) NOT NULL, FOREIGN KEY (TODO_LIST) REFERENCES TBL_TODO(ID) ON DELETE CASCADE, UNIQUE (TODO_LIST, CONTENT))")
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS "TBL_TODO_ITEM" (
+			ID SERIAL PRIMARY KEY, 
+			TODO_LIST INTEGER NOT NULL, 
+			CONTENT VARCHAR(250) NOT NULL, 
+			FOREIGN KEY (TODO_LIST) REFERENCES "TBL_TODO"(ID) ON DELETE CASCADE, 
+			UNIQUE (TODO_LIST, CONTENT)
+		)
+	`)
 
 	if err != nil {
 		panic(err)
@@ -37,14 +51,14 @@ type TodoListItem struct {
 // Methods
 func (todoList *TodoList) New(title string, description string, db *sql.DB) error {
 	// Insert into TBL_TODO
-	_, err := db.Exec("INSERT INTO TBL_TODO (TITLE, DESCRIPTION) VALUES (?, ?)", title, description)
+	_, err := db.Exec(`INSERT INTO "TBL_TODO" (TITLE, DESCRIPTION) VALUES ($1, $2)`, title, description)
 
 	if err != nil {
 		return err
 	}
 
 	// Fetch row and set id
-	err = db.QueryRow("SELECT ID FROM TBL_TODO WHERE TITLE = ?", title).Scan(&todoList.Id)
+	err = db.QueryRow(`SELECT ID FROM "TBL_TODO" WHERE TITLE = $1`, title).Scan(&todoList.Id)
 
 	if err != nil {
 		return err
@@ -60,7 +74,7 @@ func (todoList *TodoList) New(title string, description string, db *sql.DB) erro
 }
 
 func (todoList *TodoList) Delete() error {
-	_, err := todoList.db.Exec("DELETE FROM TBL_TODO WHERE ID = ?", todoList.Id)
+	_, err := todoList.db.Exec(`DELETE FROM "TBL_TODO" WHERE ID = $1"`, todoList.Id)
 	if err != nil {
 		fmt.Println("DELETING ERROR")
 		return err
@@ -76,7 +90,7 @@ func (todoList *TodoList) Delete() error {
 }
 
 func (todoList *TodoList) FindById(id int, db *sql.DB) error {
-	err := db.QueryRow("SELECT ID, TITLE, DESCRIPTION FROM TBL_TODO WHERE ID = ?", id).Scan(
+	err := db.QueryRow(`SELECT ID, TITLE, DESCRIPTION FROM "TBL_TODO" WHERE ID = $1`, id).Scan(
 		&todoList.Id,
 		&todoList.Title,
 		&todoList.Description)
@@ -84,7 +98,7 @@ func (todoList *TodoList) FindById(id int, db *sql.DB) error {
 		return err
 	}
 
-	rows, err := db.Query("SELECT ID, CONTENT FROM TBL_TODO_ITEM WHERE TODO_LIST = ?", todoList.Id)
+	rows, err := db.Query(`SELECT ID, CONTENT FROM "TBL_TODO_ITEM" WHERE TODO_LIST = $1`, todoList.Id)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -105,7 +119,7 @@ func (todoList *TodoList) FindById(id int, db *sql.DB) error {
 }
 
 func (todoList *TodoList) FindByTitle(title string, db *sql.DB) error {
-	err := db.QueryRow("SELECT ID, TITLE, DESCRIPTION FROM TBL_TODO WHERE TITLE = ?", title).Scan(
+	err := db.QueryRow(`SELECT ID, TITLE, DESCRIPTION FROM "TBL_TODO" WHERE TITLE = $1`, title).Scan(
 		&todoList.Id,
 		&todoList.Title,
 		&todoList.Description)
@@ -113,7 +127,7 @@ func (todoList *TodoList) FindByTitle(title string, db *sql.DB) error {
 		return err
 	}
 
-	rows, err := db.Query("SELECT ID, CONTENT FROM TBL_TODO_ITEM WHERE TODO_LIST = ?", todoList.Id)
+	rows, err := db.Query(`SELECT ID, CONTENT FROM "TBL_TODO_ITEM" WHERE TODO_LIST = $1`, todoList.Id)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -137,7 +151,7 @@ func (todoList *TodoList) FindByTitle(title string, db *sql.DB) error {
 func (todoList *TodoList) AddItem(content string) error {
 	// Insert into database
 
-	_, err := todoList.db.Exec("INSERT INTO TBL_TODO_ITEM (TODO_LIST, CONTENT) VALUES (?, ?)", todoList.Id, content)
+	_, err := todoList.db.Exec(`INSERT INTO "TBL_TODO_ITEM" (TODO_LIST, CONTENT) VALUES ($1, $2)`, todoList.Id, content)
 	if err != nil {
 		fmt.Println("INSERTING ERROR")
 		return err
@@ -145,7 +159,7 @@ func (todoList *TodoList) AddItem(content string) error {
 
 	// Get id
 	var id int
-	err = todoList.db.QueryRow("SELECT ID FROM TBL_TODO_ITEM WHERE TODO_LIST = ? AND CONTENT = ?", todoList.Id, content).Scan(&id)
+	err = todoList.db.QueryRow(`SELECT ID FROM "TBL_TODO_ITEM" WHERE TODO_LIST = $1 AND CONTENT = $2`, todoList.Id, content).Scan(&id)
 
 	if err != nil {
 		fmt.Println("SELECT ERROR")
@@ -174,7 +188,7 @@ func (todoList *TodoList) DeleteItem(id int) error {
 		return errors.New("id not in items of TodoList")
 	}
 
-	_, err := todoList.db.Exec("DELETE FROM TBL_TODO_ITEM WHERE ID = ?", id)
+	_, err := todoList.db.Exec(`DELETE FROM "TBL_TODO_ITEM" WHERE ID = $1`, id)
 
 	if err != nil {
 		return err
@@ -187,7 +201,7 @@ func (todoList *TodoList) DeleteItem(id int) error {
 }
 
 func (todoList *TodoList) UpdateTitle(title string) error {
-	_, err := todoList.db.Exec("UPDATE TBL_TODO SET TITLE = ? WHERE ID = ?", title, todoList.Id)
+	_, err := todoList.db.Exec(`UPDATE "TBL_TODO" SET TITLE = $1 WHERE ID = $2`, title, todoList.Id)
 
 	if err != nil {
 		return err
@@ -199,7 +213,7 @@ func (todoList *TodoList) UpdateTitle(title string) error {
 }
 
 func (todoList *TodoList) UpdateDescription(description string) error {
-	_, err := todoList.db.Exec("UPDATE TBL_TODO SET DESCRIPTION = ? WHERE ID = ?", description, todoList.Id)
+	_, err := todoList.db.Exec(`UPDATE "TBL_TODO" SET DESCRIPTION = $1 WHERE ID = $2`, description, todoList.Id)
 
 	if err != nil {
 		return err

@@ -45,7 +45,7 @@ func TodoListListing(db *sql.DB) httprouter.Handle {
 	return func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 		// Get all todo_lists
-		rows, err := db.Query("SELECT ID, TITLE FROM TBL_TODO")
+		rows, err := db.Query(`SELECT ID, TITLE FROM "TBL_TODO"`)
 		if err != nil {
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
 			return
@@ -79,11 +79,17 @@ func TodoListListing(db *sql.DB) httprouter.Handle {
 func TodoListDetail(db *sql.DB) httprouter.Handle {
 	return func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		groceryList := TodoList{}
+
 		id, err := strconv.Atoi(p.ByName("id"))
 		if err != nil {
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
 		}
 		err = groceryList.FindById(id, db)
+
+		if err != nil {
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		fp := path.Join(TEMPLATE_DIR, "todo_detail.html")
 		tmpl, err := template.ParseFiles(fp)
