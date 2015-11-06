@@ -2,7 +2,7 @@ package main
 
 import (
 	"database/sql"
-	_ "github.com/lib/pq"
+	_ "github.com/ottermad/odotgo/Godeps/_workspace/src/github.com/lib/pq"
 	"github.com/ottermad/odotgo/todo"
 	"os"
 )

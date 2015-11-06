@@ -2,7 +2,7 @@ package todo
 
 import (
 	"database/sql"
-	"github.com/julienschmidt/httprouter"
+	"github.com/ottermad/odotgo/Godeps/_workspace/src/github.com/julienschmidt/httprouter"
 	"html/template"
 	"net/http"
 	"path"

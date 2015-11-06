@@ -5,7 +5,7 @@ import (
 
 	"github.com/ottermad/odotgo/todo"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/ottermad/odotgo/Godeps/_workspace/src/github.com/julienschmidt/httprouter"
 )
 
 func main() {
