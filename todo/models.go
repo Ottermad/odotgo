@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"os"
 )
 
 // Helper Functions
@@ -16,6 +17,7 @@ func CreateTables(db *sql.DB) {
 		)
 	`)
 	if err != nil {
+		fmt.Fprintln(os.Stdout, err.Error())
 		panic(err)
 	}
 
