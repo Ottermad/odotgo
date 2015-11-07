@@ -20,6 +20,7 @@ func NewDB() *sql.DB {
 			panic(err)
 		}
 	} else {
+		fmt.Fprintln(os.Stdout, os.Getenv("DATABASE_URL"))
 		db, err = sql.Open("postgres", os.Getenv("DATABASE_URL"))
 		if err != nil {
 
@@ -27,10 +28,7 @@ func NewDB() *sql.DB {
 		}
 	}
 	fmt.Fprintln(os.Stdout, "DATABASE DONE")
-	_, err = db.Exec(`CREATE DATABASE IF NOT EXISTS ODOT`)
-	if err != nil {
-		panic(err)
-	}
+
 	todo.CreateTables(db)
 
 	return db
