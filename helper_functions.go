@@ -2,9 +2,9 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/ottermad/odotgo/Godeps/_workspace/src/github.com/lib/pq"
 	"github.com/ottermad/odotgo/todo"
-	"log"
 	"os"
 )
 
@@ -21,7 +21,7 @@ func NewDB() *sql.DB {
 	} else {
 		db, err = sql.Open("postgres", os.Getenv("DATABASE_URL"))
 		if err != nil {
-			log.Fatal(err)
+			fmt.Fprintln(os.Stdout, err.Error())
 			panic(err)
 		}
 	}
