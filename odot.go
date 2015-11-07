@@ -49,10 +49,12 @@ func main() {
 
 	r.GET("/todo/delete-item/:todolistid/:todoitemid", todo.DeleteTodoListItem(db))
 	fmt.Fprintln(os.Stdout, "DeleteTodoListItem")
+	fmt.Fprintln(os.Stdout, os.Getenv("PORT"))
 
 	if os.Getenv("LOCAL_DEV") == "TRUE" {
 		http.ListenAndServe(":8080", r)
 	} else {
 		http.ListenAndServe(os.Getenv("PORT"), r)
 	}
+
 }
