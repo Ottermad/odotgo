@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	_ "github.com/ottermad/odotgo/Godeps/_workspace/src/github.com/lib/pq"
 	"github.com/ottermad/odotgo/todo"
 	"os"
