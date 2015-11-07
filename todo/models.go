@@ -3,8 +3,6 @@ package todo
 import (
 	"database/sql"
 	"errors"
-	"fmt"
-	"os"
 )
 
 // Helper Functions
@@ -17,7 +15,6 @@ func CreateTables(db *sql.DB) {
 		)
 	`)
 	if err != nil {
-		fmt.Fprintln(os.Stdout, err.Error())
 		panic(err)
 	}
 
@@ -78,7 +75,6 @@ func (todoList *TodoList) New(title string, description string, db *sql.DB) erro
 func (todoList *TodoList) Delete() error {
 	_, err := todoList.db.Exec(`DELETE FROM "TBL_TODO" WHERE ID = $1"`, todoList.Id)
 	if err != nil {
-		fmt.Println("DELETING ERROR")
 		return err
 	}
 
@@ -102,7 +98,6 @@ func (todoList *TodoList) FindById(id int, db *sql.DB) error {
 
 	rows, err := db.Query(`SELECT ID, CONTENT FROM "TBL_TODO_ITEM" WHERE TODO_LIST = $1`, todoList.Id)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 	defer rows.Close()
@@ -112,7 +107,6 @@ func (todoList *TodoList) FindById(id int, db *sql.DB) error {
 		if err = rows.Scan(&listItem.Id, &listItem.Content); err != nil {
 			return err
 		}
-		fmt.Println(listItem)
 		todoList.Items = append(todoList.Items, listItem)
 	}
 	todoList.db = db
@@ -131,7 +125,6 @@ func (todoList *TodoList) FindByTitle(title string, db *sql.DB) error {
 
 	rows, err := db.Query(`SELECT ID, CONTENT FROM "TBL_TODO_ITEM" WHERE TODO_LIST = $1`, todoList.Id)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 	defer rows.Close()
@@ -141,7 +134,6 @@ func (todoList *TodoList) FindByTitle(title string, db *sql.DB) error {
 		if err = rows.Scan(&listItem.Id, &listItem.Content); err != nil {
 			return err
 		}
-		fmt.Println(listItem)
 		todoList.Items = append(todoList.Items, listItem)
 	}
 
@@ -155,7 +147,6 @@ func (todoList *TodoList) AddItem(content string) error {
 
 	_, err := todoList.db.Exec(`INSERT INTO "TBL_TODO_ITEM" (TODO_LIST, CONTENT) VALUES ($1, $2)`, todoList.Id, content)
 	if err != nil {
-		fmt.Println("INSERTING ERROR")
 		return err
 	}
 
@@ -164,7 +155,6 @@ func (todoList *TodoList) AddItem(content string) error {
 	err = todoList.db.QueryRow(`SELECT ID FROM "TBL_TODO_ITEM" WHERE TODO_LIST = $1 AND CONTENT = $2`, todoList.Id, content).Scan(&id)
 
 	if err != nil {
-		fmt.Println("SELECT ERROR")
 		return err
 	}
 
