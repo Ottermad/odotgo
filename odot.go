@@ -54,7 +54,7 @@ func main() {
 	if os.Getenv("LOCAL_DEV") == "TRUE" {
 		http.ListenAndServe(":8080", r)
 	} else {
-		http.ListenAndServe(os.Getenv("PORT"), r)
+		http.ListenAndServe(":"+os.Getenv("PORT"), r)
 		fmt.Fprintln(os.Stdout, "Running")
 
 	}
