@@ -27,6 +27,10 @@ func NewDB() *sql.DB {
 		}
 	}
 	fmt.Fprintln(os.Stdout, "DATABASE DONE")
+	err = db.Exec("CREATE DATABASE IF NOT EXISTS ODOT")
+	if err != nil {
+		panic(err)
+	}
 	todo.CreateTables(db)
 
 	return db
