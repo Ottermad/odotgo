@@ -55,6 +55,8 @@ func main() {
 		http.ListenAndServe(":8080", r)
 	} else {
 		http.ListenAndServe(os.Getenv("PORT"), r)
+		fmt.Fprintln(os.Stdout, "Running")
+
 	}
 
 }
