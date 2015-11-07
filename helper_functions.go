@@ -13,18 +13,13 @@ func NewDB() *sql.DB {
 
 	var db *sql.DB
 	var err error
-	fmt.Fprint(os.Stdout, "STUFF")
 	if localDev == "TRUE" {
 		db, err = sql.Open("postgres", "dbname=ODOT sslmode=disable")
 		if err != nil {
 			panic(err)
 		}
 	} else {
-		url := os.Getenv("DATABASE_URL")
-		fmt.Fprint(os.Stdout, "STUFF")
-
-		fmt.Fprint(os.Stdout, url)
-		db, err = sql.Open("postgres", url)
+		db, err = sql.Open("postgres", os.Getenv("DATABASE_URL"))
 		if err != nil {
 			panic(err)
 		}
