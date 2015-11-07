@@ -21,7 +21,7 @@ func NewDB() *sql.DB {
 		}
 	} else {
 		url := os.Getenv("DATABASE_URL")
-		fmt.Println(url)
+		fmt.Fprint(os.Stdout, url)
 		db, err = sql.Open("postgres", url)
 		if err != nil {
 			panic(err)
