@@ -21,11 +21,11 @@ func NewDB() *sql.DB {
 	} else {
 		db, err = sql.Open("postgres", os.Getenv("DATABASE_URL"))
 		if err != nil {
-			fmt.Fprintln(os.Stdout, err.Error())
+
 			panic(err)
 		}
 	}
-
+	fmt.Fprintln(os.Stdout, "DATABASE DONE")
 	todo.CreateTables(db)
 
 	return db
