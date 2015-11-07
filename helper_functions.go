@@ -5,6 +5,7 @@ import (
 	"fmt"
 	_ "github.com/ottermad/odotgo/Godeps/_workspace/src/github.com/lib/pq"
 	"github.com/ottermad/odotgo/todo"
+	"log"
 	"os"
 )
 
@@ -13,7 +14,7 @@ func NewDB() *sql.DB {
 
 	var db *sql.DB
 	var err error
-	fmt.Println(localDev)
+	fmt.Fprint(os.Stdout, localDev)
 	if localDev == "TRUE" {
 		db, err = sql.Open("postgres", "dbname=ODOT sslmode=disable")
 		if err != nil {
