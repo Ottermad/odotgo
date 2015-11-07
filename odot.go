@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/ottermad/odotgo/todo"
 
@@ -32,5 +33,9 @@ func main() {
 
 	r.GET("/todo/delete-item/:todolistid/:todoitemid", todo.DeleteTodoListItem(db))
 
-	http.ListenAndServe(":8080", r)
+	if os.Getenv("LOCAL_DEV") == "TRUE" {
+		http.ListenAndServe(":8080", r)
+	} else {
+		http.ListenAndServe(os.Getenv("PORT"), r)
+	}
 }
